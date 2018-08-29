@@ -308,6 +308,9 @@ class Transport(object):
       raise TokenRefreshException('Bad status during token exchange: %d\n%s' %
                                   (resp.status, content))
 
+    if not isinstance(content, str):
+        content = content.decode('utf-8')
+
     wrapper_object = json.loads(content)
     token = wrapper_object.get('token') or wrapper_object.get('access_token')
     _CheckState(token is not None, 'Malformed JSON response: %s' % content)
