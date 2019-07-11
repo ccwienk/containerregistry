@@ -32,14 +32,14 @@ class Http(httplib2.Http):
     self._transports = [transport_factory() for _ in range(size)]
 
   def _get_transport(self):
-    with self._condition:
-      while True:
+    while True:
+      with self._condition:
         if self._transports:
           return self._transports.pop()
 
-        # Nothing is available, wait until it is.
-        # This releases the lock until a notification occurs.
-        self._condition.wait()
+      # Nothing is available, wait until it is.
+      # This releases the lock until a notification occurs.
+      self._condition.wait()
 
   def _return_transport(self, transport):
     with self._condition:
